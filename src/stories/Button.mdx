@@ -1,0 +1,17 @@
+import { Canvas, Meta } from '@storybook/blocks';
+
+import * as ButtonStories from './Button.stories';
+
+<Meta of={ButtonStories} />
+
+# Button
+
+A button is used to initiate an action when clicked. For primary actions, use a primary button.
+
+<Canvas of={ButtonStories.Primary} />
+
+For other actions use a secondary button
+
+<Canvas of={ButtonStories.Secondary} />
+
+There are also large and small variants to account for different use cases.

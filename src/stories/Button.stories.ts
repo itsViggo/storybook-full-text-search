@@ -4,13 +4,12 @@ import { Button } from "./Button";
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: Meta<typeof Button> = {
-  title: "Example/Button",
+  title: "Example/Button Ting",
   component: Button,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
     backgroundColor: { control: "color" },
   },
-  tags: ["autodocs"],
   parameters: {
     myAddonParameter: `
 <MyComponent boolProp scalarProp={1} complexProp={{ foo: 1, bar: '2' }}>
