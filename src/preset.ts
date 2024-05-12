@@ -63,8 +63,13 @@ function getUrl(filePath: string): string {
     const storyFiles = globSync(`${storyFilePath}.*`);
     const storyFileContent = fs.readFileSync(storyFiles[0], 'utf-8');
     const storyTitle = /title: ['"](.*)['"]/.exec(storyFileContent);
-    return `${storyTitle[1].replace(/[/ ]/g, '-').toLowerCase()}--docs`;
+    return `/?path=/docs/${storyTitle[1].replace(/[/ ]/g, '-').toLowerCase()}--docs`;
   } else {
-    return '';
+    const title = /<Meta title=["'](.*)["']/.exec(fileContent);
+    if (title) {
+      return `/?path=/docs/${title[1].replace(/[/ ]/g, '-').toLowerCase()}--docs`;
+    } else {
+      return '';
+    }
   }
 }
