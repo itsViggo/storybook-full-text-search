@@ -40,10 +40,14 @@ function viteStorybookFullTextSearchPlugin(options: any) {
     },
     transform: async function () {
       const files = globSync('**/*.mdx', { ignore: ['**/node_modules/**', '**/storybook-static/**', '**/*.chunk.*'] });
-      const searchData = files.map((file) => ({
-        url: getUrl(file),
-        data: fs.readFileSync(file, 'utf-8')
-      }))
+      const searchData = files.map((file) => {
+        const title = getTitle(file);
+        return {
+          url: getUrl(title),
+          title,
+          data: getSearchMetadata(file)
+        }
+      })
       if (!fs.existsSync(publicDir)) {
         fs.mkdirSync(publicDir);
       }
@@ -52,7 +56,11 @@ function viteStorybookFullTextSearchPlugin(options: any) {
   } as any;
 }
 
-function getUrl(filePath: string): string {
+function getUrl(title: string): string {
+  return `/?path=/docs/${title.replace(/[/ ]/g, '-').toLowerCase()}--docs`;
+}
+
+function getTitle(filePath: string): string {
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const relatedStory = /<Meta of={(.*)}/.exec(fileContent)
 
@@ -63,13 +71,25 @@ function getUrl(filePath: string): string {
     const storyFiles = globSync(`${storyFilePath}.*`);
     const storyFileContent = fs.readFileSync(storyFiles[0], 'utf-8');
     const storyTitle = /title: ['"](.*)['"]/.exec(storyFileContent);
-    return `/?path=/docs/${storyTitle[1].replace(/[/ ]/g, '-').toLowerCase()}--docs`;
+    return storyTitle[1];
   } else {
     const title = /<Meta title=["'](.*)["']/.exec(fileContent);
     if (title) {
-      return `/?path=/docs/${title[1].replace(/[/ ]/g, '-').toLowerCase()}--docs`;
+      return title[1];
     } else {
       return '';
     }
   }
+}
+
+function getSearchMetadata(file: string) {
+  const fileContent = fs.readFileSync(file, 'utf-8')
+  const clean = fileContent
+    .replace(/import.*/g, '')
+    .replace(/(\r\n|\n|\r)/gm, '')
+    .replace(/<style>.*<\/style>/gs, '')
+    .replace(/<[^>]*>/gs, '');
+
+  return clean;
+
 }
